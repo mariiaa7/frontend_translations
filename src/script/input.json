@@ -1,0 +1,10 @@
+[
+    {
+        "label": "signin.title",
+        "text": "Login to account"
+    },
+    {
+        "label": "signin.subtitle",
+        "text": "Demo Login as"
+    }
+]

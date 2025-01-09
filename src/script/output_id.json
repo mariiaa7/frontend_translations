@@ -1,0 +1,12 @@
+[
+    {
+        "label": "signin.title",
+        "text": "Login to account",
+        "id": "5ef48d25-ffe4-4890-a54a-7bbade0b0374"
+    },
+    {
+        "label": "signin.subtitle",
+        "text": "Demo Login as",
+        "id": "696ccf07-78fc-47ab-b3f1-5933f5f29a85"
+    }
+]
