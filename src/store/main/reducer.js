@@ -46,7 +46,9 @@ import {
   REPORT_LIST,
   GET_SINGLE_REPORT,
   ADD_REPORT_TO_LIST,
-  DELETE_REPORT
+  DELETE_REPORT,
+  FETCH_TRANSLATIONS_SUCCESS, 
+  FETCH_TRANSLATIONS_FAILURE
 } from "../types";
 
 const initialState = {
@@ -69,7 +71,9 @@ const initialState = {
   kpiClassInstane: {},
   forecast: [],
   reports: [],
-  singleReport: {}
+  singleReport: {},
+  translations: {},
+  error: null,
 };
 
 const MyReducer = (state = initialState, action) => {
@@ -490,9 +494,22 @@ const MyReducer = (state = initialState, action) => {
                 error: false,
                 reports: updatedList
             };
+
+        case FETCH_TRANSLATIONS_SUCCESS:
+            return {
+              ...state,
+              translations: action.payload,
+            };
+
+        case FETCH_TRANSLATIONS_FAILURE:
+            return {
+              ...state,
+              error: action.payload,
+            };
       default:
           return { ...state };
   }
 }
 
 export default MyReducer;
+

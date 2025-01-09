@@ -1,39 +1,47 @@
-import * as React from "react"; // Import React library
-import Button from "@mui/material/Button"; // Import MUI Button component
-import TextField from "@mui/material/TextField"; // Import MUI TextField component
-import Box from "@mui/material/Box"; // Import MUI Box component for layout
-import Typography from "@mui/material/Typography"; // Import MUI Typography for text styling
-import AuthLayout from ".."; // Import AuthLayout for consistent authentication page design
-import { Link } from "react-router-dom"; // Import Link for navigation
-import Copyright from "../Copyright"; // Import the Copyright component for footer
-import { useNavigate } from "react-router-dom"; // Import useNavigate for programmatic navigation
-import { connect } from "react-redux"; // Import connect to link Redux state and actions
-import { userLogin } from "../../../store/main/actions"; // Import userLogin action for dispatching login functionality
-import "../style.scss"; // Import component-specific styles
-import { ButtonGroup } from "@mui/material"; // Import MUI ButtonGroup for grouping buttons
+import * as React from "react";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import AuthLayout from "..";
+import { Link } from "react-router-dom";
+import Copyright from "../Copyright";
+import { useNavigate } from "react-router-dom";
+import { connect } from "react-redux";
+import { userLogin } from "../../../store/main/actions";
+import "../style.scss";
+import { ButtonGroup } from "@mui/material";
 
-function SignIn({ userLogin, loading, loginError, isAuth, errMsg }) {
-  const navigate = useNavigate(); // Initialize navigate for redirection
+function SignIn({
+  userLogin,
+  loading,
+  loginError,
+  isAuth,
+  errMsg,
+  translations, // Aggiungi translations da Redux
+}) {
+  const navigate = useNavigate();
   const [userAuth, setUserAuth] = React.useState({
-    email: "", // User's email
-    password: "", // User's password
-    role: undefined, // User's role (optional)
+    email: "",
+    password: "",
+    role: undefined,
   });
 
-  // Function to handle form submission
+  // Funzione per ottenere la traduzione per una data etichetta
+  const translate = (slug) => translations[slug] || slug; // Se non trovata, ritorna il nome del campo (fallback)
+
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
-    const data = new FormData(event.currentTarget); // Extract form data
-    const email = data.get("email"); // Get email from form
-    const password = data.get("password"); // Get password from form
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const email = data.get("email");
+    const password = data.get("password");
     if (email && password) {
-      // If both email and password are provided
       await userLogin(
         {
           email: email,
           password: password,
         },
-        navigate // Pass navigate to allow redirection after login
+        navigate
       );
     }
   };
@@ -41,15 +49,10 @@ function SignIn({ userLogin, loading, loginError, isAuth, errMsg }) {
   return (
     <AuthLayout>
       <Box className="authContainer">
-        {/* Container for the sign-in form */}
-        <Typography className="heading"> Login to account </Typography>
-        {/* Heading text */}
-
-        <Box
-          sx={{ display: "flex", alignItems: "center", gap: "1rem", mt: 1, mb: 1 }}
-        >
-          <Typography> Demo Login as </Typography>
-          {/* Demo login section */}
+        <Typography className="heading">{translate("login_heading")}</Typography> {/* Traduci il titolo */}
+        
+        <Box sx={{ display: "flex", alignItems: "center", gap: "1rem", mt: 1, mb: 1 }}>
+          <Typography>{translate("demo_login_as")}</Typography>
           <ButtonGroup variant="outlined" aria-label="Demo Accounts">
             <Button
               variant={userAuth.role === "smo" ? "contained" : "outlined"}
@@ -78,20 +81,15 @@ function SignIn({ userLogin, loading, loginError, isAuth, errMsg }) {
           </ButtonGroup>
         </Box>
 
-        <Typography className="subHeading">
-          {" "}
-          Please enter your email and password to continue{" "}
-        </Typography>
-        {/* Subheading text */}
+        <Typography className="subHeading">{translate("enter_credentials")}</Typography> {/* Traduci la sottotitolo */}
 
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-          {/* Form for user input */}
           <TextField
             margin="normal"
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={translate("email_address_label")} // Traduci l'etichetta
             name="email"
             autoComplete="email"
             autoFocus
@@ -105,7 +103,7 @@ function SignIn({ userLogin, loading, loginError, isAuth, errMsg }) {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={translate("password_label")} // Traduci l'etichetta
             type="password"
             id="password"
             autoComplete="current-password"
@@ -116,22 +114,20 @@ function SignIn({ userLogin, loading, loginError, isAuth, errMsg }) {
           />
 
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-            {/* Links for forgot password and sign-up */}
             <Box>
               <Link href="#" variant="body2">
-                Forgot password?
+                {translate("forgot_password")} {/* Traduci il testo del link */}
               </Link>
             </Box>
             <Box>
               <Link to="/signup" variant="body2">
-                {"Don't have an account? Sign Up"}
+                {translate("dont_have_account")} {/* Traduci il testo del link */}
               </Link>
             </Box>
           </Box>
 
           {!loading && (
             <Box sx={{ textAlign: "center" }}>
-              {/* Sign-in button */}
               <Button
                 type="submit"
                 variant="contained"
@@ -139,25 +135,25 @@ function SignIn({ userLogin, loading, loginError, isAuth, errMsg }) {
                 sx={{ mt: 1, mb: 2 }}
                 disabled={!userAuth.email || !userAuth.password}
               >
-                Sign In
+                {translate("sign_in_button")} {/* Traduci il testo del bottone */}
               </Button>
             </Box>
           )}
+
           <Copyright sx={{ mt: 5 }} />
-          {/* Copyright component */}
         </Box>
       </Box>
     </AuthLayout>
   );
 }
 
-// Map Redux state to component props
+// Mappa lo stato Redux nel componente
 const mapStatetoProps = ({ main }) => ({
-  loading: main.loading, // Loading state
-  loginError: main.loginError, // Login error status
-  isAuth: main.isAuth, // Authentication status
-  errMsg: main.errMsg, // Error message
+  loading: main.loading,
+  loginError: main.loginError,
+  isAuth: main.isAuth,
+  errMsg: main.errMsg,
+  translations: main.translations, // Aggiungi translations al mapping
 });
 
-// Connect Redux state and actions to the component
 export default connect(mapStatetoProps, { userLogin })(SignIn);

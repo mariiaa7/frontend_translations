@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeEvery } from "redux-saga/effects";
+import { all, call, fork, put, takeEvery, takeLatest } from "redux-saga/effects";
 
 import axios from "axios";
 
@@ -16,7 +16,8 @@ import {
   GET_PRODUCTION_DETAIL,
   GET_ENERGY_DASHBOARD,
   GET_KPI_CLASS_INSTANCE,
-  GET_FORECAST
+  GET_FORECAST,
+  FETCH_TRANSLATIONS_REQUEST
 } from "../types";
 
 import setDefaultToken, { clearLocal } from "../../constants/localstorage";
@@ -49,7 +50,10 @@ import {
   getKpiClassInstanceSuccess,
   getKpiClassInstanceError,
   getForecastingSuccess,
-  getForecastingError
+  getForecastingError,
+  fetchTranslationsRequest, 
+  fetchTranslationsSuccess, 
+  fetchTranslationsFailure
   // getEnergyDashboardError
 } from "./actions";
 
@@ -70,6 +74,7 @@ import {
   GetClassInstance
 } from "../../constants/apiRoutes";
 import { getOneDay5MonthsAgo, runDBQuery, transformMachineList } from "../../constants/_helper";
+import { fetchTranslations } from '../contentfulAPI';
 
 // const userLoginAPI = async data => {
 //   return await axios.post(LoginUserAPI, data);
@@ -406,6 +411,14 @@ function* getForecastingSaga({ payload }) {
   }
 }
 
+function* fetchTranslationsSaga() {
+  try {
+    const translations = yield call(fetchTranslations); // Chiamata API
+    yield put(fetchTranslationsSuccess(translations)); // Success
+  } catch (error) {
+    yield put(fetchTranslationsFailure(error.message)); // Error
+  }
+}
 
 export function* watchUserRegister() {
   yield takeEvery(USER_REGISTER, userRegisterSaga);
@@ -450,6 +463,10 @@ export function* watchGetForecasting() {
   yield takeEvery(GET_FORECAST, getForecastingSaga);
 }
 
+export function* watchFetchTranslations() {
+  yield takeLatest(FETCH_TRANSLATIONS_REQUEST, fetchTranslationsSaga);
+}
+
 export default function* rootSaga() {
   yield all([
     fork(watchUserLogin),
@@ -466,5 +483,6 @@ export default function* rootSaga() {
     fork(watchGetEnergyDashboard),
     fork(watchGetKbClassInstance),
     fork(watchGetForecasting),
+    fork(watchFetchTranslations)
   ]);
 }

@@ -44,7 +44,10 @@ import {
   REPORT_LIST,
   GET_SINGLE_REPORT,
   ADD_REPORT_TO_LIST,
-  DELETE_REPORT
+  DELETE_REPORT,
+  FETCH_TRANSLATIONS_REQUEST, 
+  FETCH_TRANSLATIONS_SUCCESS, 
+  FETCH_TRANSLATIONS_FAILURE
 } from "../types";
 
 export const registerUser = (payload, navigate) => ({
@@ -268,4 +271,17 @@ export const addReportToList = (payload) => ({
 export const deleteReport = (payload) => ({
   type: DELETE_REPORT,
   payload
+});
+export const fetchTranslationsRequest = () => ({
+  type: FETCH_TRANSLATIONS_REQUEST,
+});
+
+export const fetchTranslationsSuccess = (translations) => ({
+  type: FETCH_TRANSLATIONS_SUCCESS,
+  payload: translations,
+});
+
+export const fetchTranslationsFailure = (error) => ({
+  type: FETCH_TRANSLATIONS_FAILURE,
+  payload: error,
 });
